@@ -1,0 +1,47 @@
+{
+  "name": "chigura2",
+  "version": "0.1.0",
+  "description": "A tiny TypeScript widget that puts a pixel cat inside your web page.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aoi-ome/chigura2.git"
+  },
+  "homepage": "https://github.com/aoi-ome/chigura2#readme",
+  "bugs": {
+    "url": "https://github.com/aoi-ome/chigura2/issues"
+  },
+  "keywords": [
+    "cat",
+    "pixel-art",
+    "widget",
+    "typescript",
+    "browser",
+    "canvas"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "node --eval \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc",
+    "check": "biome check src test demo",
+    "format": "biome format --write src test demo",
+    "lint": "biome lint src test demo",
+    "prepublishOnly": "npm run build",
+    "test": "npm run build && node --test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.14",
+    "typescript": "^6.0.3"
+  }
+}

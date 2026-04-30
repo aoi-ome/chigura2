@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>chigura2 demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Avenir Next", "Hiragino Sans", sans-serif;
+        background:
+          radial-gradient(circle at top, #f7fbff 0, #dcecff 48%, #bed7f4 100%);
+        color: #24415f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      main {
+        width: min(100%, 760px);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 1;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      .intro {
+        margin-bottom: 16px;
+      }
+
+      .stage {
+        padding: 16px;
+        border: 1px solid rgba(36, 65, 95, 0.12);
+        border-radius: 20px;
+        background: rgba(250, 253, 255, 0.76);
+        box-shadow: 0 20px 50px rgba(55, 97, 143, 0.14);
+        backdrop-filter: blur(6px);
+      }
+
+      .stage + .stage {
+        margin-top: 16px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .control {
+        display: grid;
+        gap: 6px;
+      }
+
+      .control label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: rgba(36, 65, 95, 0.75);
+      }
+
+      .control select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid rgba(36, 65, 95, 0.14);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.92);
+        color: inherit;
+        font: inherit;
+      }
+
+      .control select:focus {
+        outline: 2px solid rgba(83, 129, 180, 0.22);
+        outline-offset: 2px;
+      }
+
+      #field {
+        position: relative;
+        width: 100%;
+        height: min(70vw, 420px);
+        min-height: 320px;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(36, 65, 95, 0.1);
+        background:
+          linear-gradient(to bottom, #f6fbff 0%, #dfeeff 60%, #bfd8f4 100%);
+      }
+
+      #playground {
+        position: relative;
+        width: 100%;
+        height: min(48vw, 280px);
+        min-height: 220px;
+        overflow: hidden;
+        border-radius: 14px;
+        border: 1px solid rgba(36, 65, 95, 0.1);
+        background:
+          linear-gradient(to bottom, #f6fbff 0%, #dfeeff 60%, #bfd8f4 100%);
+      }
+
+      .caption {
+        margin-top: 12px;
+        font-size: 0.95rem;
+        color: rgba(36, 65, 95, 0.78);
+      }
+
+      .tora-badge {
+        position: absolute;
+        z-index: 20;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(36, 65, 95, 0.92);
+        color: #f7fbff;
+        font-size: 0.82rem;
+        line-height: 1;
+        white-space: nowrap;
+        pointer-events: none;
+        transform: translate(-50%, 10px);
+        opacity: 0;
+        transition:
+          opacity 160ms ease,
+          transform 160ms ease;
+      }
+
+      .tora-badge.is-visible {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      @media (max-width: 640px) {
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="intro">
+        <h1>chigura2</h1>
+        <p>A tiny widget that puts pixel cats into your web page.</p>
+      </div>
+
+      <section class="stage">
+        <div id="field"></div>
+        <p class="caption">Click a cat to see how it reacts. This field keeps the full crowd demo.</p>
+      </section>
+
+      <section class="stage">
+        <div class="controls">
+          <div class="control">
+            <label for="breed-select">Breed</label>
+            <select id="breed-select">
+              <option value="buchi">buchi</option>
+              <option value="hachi">hachi</option>
+              <option value="kuro">kuro</option>
+              <option value="mike">mike</option>
+              <option value="saba">saba</option>
+              <option value="sabi">sabi</option>
+              <option value="shiro">shiro</option>
+              <option value="tora">tora</option>
+            </select>
+          </div>
+          <div class="control">
+            <label for="speed-select">Speed</label>
+            <select id="speed-select">
+              <option value="slow">slow</option>
+              <option value="normal" selected>normal</option>
+              <option value="fast">fast</option>
+              <option value="faster">faster</option>
+            </select>
+          </div>
+          <div class="control">
+            <label for="scale-select">Scale</label>
+            <select id="scale-select">
+              <option value="s">s</option>
+              <option value="m" selected>m</option>
+              <option value="l">l</option>
+              <option value="xl">xl</option>
+            </select>
+          </div>
+        </div>
+        <div id="playground"></div>
+        <p class="caption">Change the options to swap a single cat interactively.</p>
+      </section>
+    </main>
+
+    <script type="module">
+      import { Chigura } from "../dist/index.js";
+
+      const field = document.getElementById("field");
+      const playground = document.getElementById("playground");
+      const breedSelect = document.getElementById("breed-select");
+      const speedSelect = document.getElementById("speed-select");
+      const scaleSelect = document.getElementById("scale-select");
+      const toraBadge = document.createElement("div");
+      let toraBadgeTimer = null;
+      let playgroundCat = null;
+      let playgroundVersion = 0;
+
+      toraBadge.className = "tora-badge";
+      toraBadge.textContent = "Reactions can be customized.";
+      field.appendChild(toraBadge);
+
+      function showToraBadge({ position, size }) {
+        toraBadge.style.left = `${position.x + size.width / 2}px`;
+        toraBadge.style.top = `${position.y + size.height + 10}px`;
+        toraBadge.classList.add("is-visible");
+
+        if (toraBadgeTimer !== null) {
+          window.clearTimeout(toraBadgeTimer);
+        }
+
+        toraBadgeTimer = window.setTimeout(() => {
+          toraBadge.classList.remove("is-visible");
+          toraBadgeTimer = null;
+        }, 1200);
+      }
+
+      async function mountPlaygroundCat() {
+        const version = ++playgroundVersion;
+
+        if (playgroundCat) {
+          playgroundCat.unmount();
+          playgroundCat = null;
+        }
+
+        const cat = new Chigura({
+          breed: breedSelect.value,
+          speed: speedSelect.value,
+          scale: scaleSelect.value,
+        });
+
+        await cat.mount(playground);
+        if (version !== playgroundVersion) {
+          cat.unmount();
+          return;
+        }
+
+        playgroundCat = cat;
+      }
+
+      breedSelect.addEventListener("change", mountPlaygroundCat);
+      speedSelect.addEventListener("change", mountPlaygroundCat);
+      scaleSelect.addEventListener("change", mountPlaygroundCat);
+
+      mountPlaygroundCat();
+
+      const buchi = new Chigura({ breed: "buchi" });
+      buchi.mount(field);
+
+      const hachi = new Chigura({ breed: "hachi", scale: "s" });
+      hachi.mount(field);
+
+      const kuro = new Chigura({ breed: "kuro", scale: "l" });
+      kuro.mount(field);
+
+      const mike = new Chigura({ breed: "mike", scale: "xl" });
+      mike.mount(field);
+
+      const saba = new Chigura({ breed: "saba", speed: "slow" });
+      saba.mount(field);
+
+      const sabi = new Chigura({ breed: "sabi", speed: "fast" });
+      sabi.mount(field);
+
+      const shiro = new Chigura({ breed: "shiro", speed: "faster" });
+      shiro.mount(field);
+
+      const tora = new Chigura({
+        breed: "tora",
+        reactions: [
+          ({ position, size }) => showToraBadge({ position, size }),
+        ],
+      });
+      tora.mount(field);
+    </script>
+  </body>
+</html>
