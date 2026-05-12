@@ -36,6 +36,7 @@
     "build": "npm run clean && tsc",
     "check": "biome check src test demo",
     "format": "biome format --write src test demo",
+    "format:check": "biome format src test demo",
     "lint": "biome lint src test demo",
     "prepublishOnly": "npm run build",
     "test": "npm run build && node --test"
